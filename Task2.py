@@ -1,7 +1,9 @@
 from Task1 import AddressBook, Record
 
 
-# ======== Декоратор для обробки помилок =========
+# Декоратор для обробки помилок ========
+
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
@@ -16,7 +18,9 @@ def input_error(func):
     return inner
 
 
-# ==== Функції-обробники =====
+# Функції-обробники =======
+
+
 @input_error
 def add_contact(args, book):
     name, phone, *_ = args
@@ -85,13 +89,13 @@ def birthdays(args, book):
     return "\n".join(f"{day}: {', '.join(names)}" for day, names in upcoming.items())
 
 
-# ==== Парсер команд =====
+# Парсер команд =========
 def parse_input(user_input):
     parts = user_input.strip().split()
     return parts[0].lower(), parts[1:]
 
 
-# ==== Основна функція main() =====
+# Основна функція main() =======
 def main():
     book = AddressBook()
     print("Welcome to the assistant bot!")

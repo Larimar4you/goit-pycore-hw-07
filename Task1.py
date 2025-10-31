@@ -1,5 +1,5 @@
 from collections import UserDict
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 # ==== Класи полів =====
@@ -22,13 +22,11 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, value):
         try:
-            # Додайте перевірку коректності даних
             self.value = datetime.strptime(value, "%d.%m.%Y").date()
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
 
 
-# ===== Клас Record =====
 class Record:
     def __init__(self, name):
         self.name = Name(name)
@@ -64,15 +62,24 @@ class AddressBook(UserDict):
 
     def get_upcoming_birthdays(self):
         today = datetime.today().date()
-        next_week = today + timedelta(days=7)
         result = {}
 
         for record in self.data.values():
             if not record.birthday:
                 continue
-            bday_this_year = record.birthday.value.replace(year=today.year)
-            if today <= bday_this_year <= next_week:
-                weekday = bday_this_year.strftime("%A")
+
+            bday = record.birthday.value.replace(year=today.year)
+
+            if bday < today:
+                bday = bday.replace(year=today.year + 1)
+
+            delta_days = (bday - today).days
+            if 0 <= delta_days < 7:
+                weekday = bday.strftime("%A")
+
+                if weekday in ("Saturday", "Sunday"):
+                    weekday = "Monday"
+
                 result.setdefault(weekday, []).append(record.name.value)
 
         return result
